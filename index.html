@@ -18,6 +18,7 @@
         }
       }
     </script>
+    <!-- <script src="js/main.js" type="module"></script> -->
     <!-- <link type="text/css" rel="stylesheet" href="main.css" /> -->
   </head>
   <body>
@@ -46,6 +47,8 @@
       import { FontLoader } from "three/addons/loaders/FontLoader.js";
       import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
       import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
       THREE.Cache.enabled = true;
@@ -58,7 +61,7 @@
 
       let firstLetter = true;
 
-      let text = "Researcher",
+      let text = "Researcher\n\nDeveloper",
         text2 = "Developer",
         bevelEnabled = true,
         font = undefined,
@@ -271,7 +274,8 @@
       function loadFont() {
         const loader = new FontLoader();
         loader.load(
-          "fonts/" + fontName + "_" + fontWeight + ".typeface.json",
+          //"fonts/" + fontName + "_" + fontWeight + ".typeface.json",
+          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/optimer_bold.typeface.json",
           function (response) {
             font = response;
 
