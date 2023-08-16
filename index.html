@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>three.js webgl - geometry - text</title>
+    <title>Portfolio: Coming Soon</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <!-- <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"> -->
@@ -22,12 +22,10 @@
     <!-- <link type="text/css" rel="stylesheet" href="main.css" /> -->
   </head>
   <body>
-    <div id="info">
-      <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a>
-      - procedural 3D text<br />
-      type to enter new text, drag to spin the text
+    <div id="info"></div>
+    <div class="container">
+      <div class="slider"></div>
     </div>
-
     <!-- Import maps polyfill -->
     <!-- Remove this when import maps will be widely supported -->
     <!-- 		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script> -->
@@ -55,7 +53,10 @@
 
       let container;
 
-      let camera, cameraTarget, scene, renderer;
+      let camera, cameraTarget, scene, renderer, controls;
+      let sceneL, sceneR;
+
+      let sliderPos = window.innerWidth / 2;
 
       let group, textMesh1, textMesh2, textGeo, materials;
 
@@ -112,7 +113,7 @@
       function init() {
         container = document.createElement("div");
         document.body.appendChild(container);
-
+        // container = document.querySelector(".container");
         // CAMERA
 
         camera = new THREE.PerspectiveCamera(
@@ -130,6 +131,9 @@
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
         scene.fog = new THREE.Fog(0x000000, 250, 1400);
+
+        sceneR = new THREE.Scene();
+        sceneR.background = new THREE.Color(0x8fbcd4);
 
         // LIGHTS
 
@@ -178,9 +182,6 @@
         container.style.touchAction = "none";
         container.addEventListener("pointerdown", onPointerDown);
 
-        document.addEventListener("keypress", onDocumentKeyPress);
-        document.addEventListener("keydown", onDocumentKeyDown);
-
         //
 
         const params = {
@@ -212,13 +213,13 @@
 
         //
 
-        const gui = new GUI();
+        // const gui = new GUI();
 
-        gui.add(params, "changeColor").name("change color");
-        gui.add(params, "changeFont").name("change font");
-        gui.add(params, "changeWeight").name("change weight");
-        gui.add(params, "changeBevel").name("change bevel");
-        gui.open();
+        // gui.add(params, "changeColor").name("change color");
+        // gui.add(params, "changeFont").name("change font");
+        // gui.add(params, "changeWeight").name("change weight");
+        // gui.add(params, "changeBevel").name("change bevel");
+        // gui.open();
 
         //
 
@@ -235,41 +236,6 @@
       }
 
       //
-
-      function onDocumentKeyDown(event) {
-        if (firstLetter) {
-          firstLetter = false;
-          text = "";
-        }
-
-        const keyCode = event.keyCode;
-
-        // backspace
-
-        if (keyCode == 8) {
-          event.preventDefault();
-
-          text = text.substring(0, text.length - 1);
-          refreshText();
-
-          return false;
-        }
-      }
-
-      function onDocumentKeyPress(event) {
-        const keyCode = event.which;
-
-        // backspace
-
-        if (keyCode == 8) {
-          event.preventDefault();
-        } else {
-          const ch = String.fromCharCode(keyCode);
-          text += ch;
-
-          refreshText();
-        }
-      }
 
       function loadFont() {
         const loader = new FontLoader();
