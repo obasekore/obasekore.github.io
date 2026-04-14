@@ -1,351 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Portfolio: Coming Soon</title>
+<head>
+    <title>Hammed Obasekore | Portfolio</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="google-site-verification" content="5rnlzwuY1sC2wJzfRzxJ9cjpenAmd-Q6tOFnruNcKLY" />
-    <!-- <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"> -->
-    <script
-      async
-      src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
-    ></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #050505; color: white; }
+        #ui-layer { position: absolute; top: 20px; left: 20px; pointer-events: none; z-index: 10; }
+        .label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #00ffcc; }
+        h1 { margin: 0; font-size: 1.5rem; font-weight: 300; }
+        #description { position: absolute; bottom: 20px; left: 20px; max-width: 300px; font-size: 0.9rem; opacity: 0.7; }
+    </style>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
     <script type="importmap">
-      {
+    {
         "imports": {
-          "three": "https://unpkg.com/three@v0.155.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@v0.155.0/examples/jsm/"
+            "three": "https://unpkg.com/three@v0.155.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@v0.155.0/examples/jsm/"
         }
-      }
+    }
     </script>
-    <!-- <script src="js/main.js" type="module"></script> -->
-    <!-- <link type="text/css" rel="stylesheet" href="main.css" /> -->
-  </head>
-  <body>
-    <div id="info"></div>
-    <div class="container">
-      <div class="slider"></div>
+</head>
+<body>
+    <div id="ui-layer">
+        <div class="label">Researcher & AI Developer</div>
+        <h1>HAMMED OBASEKORE, PhD</h1>
     </div>
-    <!-- Import maps polyfill -->
-    <!-- Remove this when import maps will be widely supported -->
-    <!-- 		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script> -->
+    
+    <div id="description">
+        Click a node to explore: <br>
+        • Deep Reinforcement Learning <br>
+        • Robot Smart Systems <br>
+        • Sim-to-Real Optimization
+    </div>
 
-    <!-- 		<script type="importmap">
-			{
-				"imports": {
-					"three": "../build/three.module.js",
-					"three/addons/": "./jsm/"
-				}
-			}
-		</script>
- -->
     <script type="module">
-      import * as THREE from "three";
-
-      import { FontLoader } from "three/addons/loaders/FontLoader.js";
-      import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
-
-      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
-      import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-
-      THREE.Cache.enabled = true;
-
-      let container;
-
-      let camera, cameraTarget, scene, renderer, controls;
-      let sceneL, sceneR;
-
-      let sliderPos = window.innerWidth / 2;
-
-      let group, textMesh1, textMesh2, textGeo, materials;
-
-      let firstLetter = true;
-
-      let text = "Researcher\n\nDeveloper",
-        text2 = "Developer",
-        bevelEnabled = true,
-        font = undefined,
-        fontName = "optimer", // helvetiker, optimer, gentilis, droid sans, droid serif
-        fontWeight = "bold"; // normal bold
-
-      const height = 20,
-        size = 70,
-        hover = 30,
-        curveSegments = 4,
-        bevelThickness = 2,
-        bevelSize = 1.5;
-
-      const mirror = true;
-
-      const fontMap = {
-        helvetiker: 0,
-        optimer: 1,
-        gentilis: 2,
-        "droid/droid_sans": 3,
-        "droid/droid_serif": 4,
-      };
-
-      const weightMap = {
-        regular: 0,
-        bold: 1,
-      };
-
-      const reverseFontMap = [];
-      const reverseWeightMap = [];
-
-      for (const i in fontMap) reverseFontMap[fontMap[i]] = i;
-      for (const i in weightMap) reverseWeightMap[weightMap[i]] = i;
-
-      let targetRotation = 0;
-      let targetRotationOnPointerDown = 0;
-
-      let pointerX = 0;
-      let pointerXOnPointerDown = 0;
-
-      let windowHalfX = window.innerWidth / 2;
-
-      let fontIndex = 1;
-
-      init();
-      animate();
-
-      function init() {
-        container = document.createElement("div");
-        document.body.appendChild(container);
-        // container = document.querySelector(".container");
-        // CAMERA
-
-        camera = new THREE.PerspectiveCamera(
-          30,
-          window.innerWidth / window.innerHeight,
-          1,
-          1500
-        );
-        camera.position.set(0, 400, 700);
-
-        cameraTarget = new THREE.Vector3(0, 150, 0);
-
-        // SCENE
-
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);
-        scene.fog = new THREE.Fog(0x000000, 250, 1400);
-
-        sceneR = new THREE.Scene();
-        sceneR.background = new THREE.Color(0x8fbcd4);
-
-        // LIGHTS
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
-        dirLight.position.set(0, 0, 1).normalize();
-        scene.add(dirLight);
-
-        const pointLight = new THREE.PointLight(0xffffff, 4.5, 0, 0);
-        pointLight.color.setHSL(Math.random(), 1, 0.5);
-        pointLight.position.set(0, 100, 90);
-        scene.add(pointLight);
-
-        materials = [
-          new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
-          new THREE.MeshPhongMaterial({ color: 0xffffff }), // side
-        ];
-
-        group = new THREE.Group();
-        group.position.y = 100;
-
-        scene.add(group);
-
-        loadFont();
-
-        const plane = new THREE.Mesh(
-          new THREE.PlaneGeometry(10000, 10000),
-          new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            opacity: 0.5,
-            transparent: true,
-          })
-        );
-        plane.position.y = 100;
-        plane.rotation.x = -Math.PI / 2;
-        scene.add(plane);
-
-        // RENDERER
-
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        container.appendChild(renderer.domElement);
-
-        // EVENTS
-
-        container.style.touchAction = "none";
-        container.addEventListener("pointerdown", onPointerDown);
-
-        //
-
-        const params = {
-          changeColor: function () {
-            pointLight.color.setHSL(Math.random(), 1, 0.5);
-          },
-          changeFont: function () {
-            fontIndex++;
-
-            fontName = reverseFontMap[fontIndex % reverseFontMap.length];
-
-            loadFont();
-          },
-          changeWeight: function () {
-            if (fontWeight === "bold") {
-              fontWeight = "regular";
-            } else {
-              fontWeight = "bold";
-            }
-
-            loadFont();
-          },
-          changeBevel: function () {
-            bevelEnabled = !bevelEnabled;
-
-            refreshText();
-          },
-        };
-
-        //
-
-        // const gui = new GUI();
-
-        // gui.add(params, "changeColor").name("change color");
-        // gui.add(params, "changeFont").name("change font");
-        // gui.add(params, "changeWeight").name("change weight");
-        // gui.add(params, "changeBevel").name("change bevel");
-        // gui.open();
-
-        //
-
-        window.addEventListener("resize", onWindowResize);
-      }
-
-      function onWindowResize() {
-        windowHalfX = window.innerWidth / 2;
-
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-
-      //
-
-      function loadFont() {
-        const loader = new FontLoader();
-        loader.load(
-          //"fonts/" + fontName + "_" + fontWeight + ".typeface.json",
-          "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/optimer_bold.typeface.json",
-          function (response) {
-            font = response;
-
-            refreshText();
-          }
-        );
-      }
-
-      function createText() {
-        textGeo = new TextGeometry(text, {
-          font: font,
-
-          size: size,
-          height: height,
-          curveSegments: curveSegments,
-
-          bevelThickness: bevelThickness,
-          bevelSize: bevelSize,
-          bevelEnabled: bevelEnabled,
-        });
-
-        textGeo.computeBoundingBox();
-
-        const centerOffset =
-          -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
-
-        textMesh1 = new THREE.Mesh(textGeo, materials);
-
-        textMesh1.position.x = centerOffset;
-        textMesh1.position.y = hover;
-        textMesh1.position.z = 0;
-
-        textMesh1.rotation.x = 0;
-        textMesh1.rotation.y = Math.PI * 2;
-
-        group.add(textMesh1);
-
-        if (mirror) {
-          textMesh2 = new THREE.Mesh(textGeo, materials);
-
-          textMesh2.position.x = centerOffset;
-          textMesh2.position.y = -hover;
-          textMesh2.position.z = height;
-
-          textMesh2.rotation.x = Math.PI;
-          textMesh2.rotation.y = Math.PI * 2;
-
-          group.add(textMesh2);
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        let scene, camera, renderer, controls, raycaster, mouse;
+        const nodes = [];
+
+        init();
+        animate();
+
+        function init() {
+            // SCENE & CAMERA
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x050505, 10, 50);
+            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 10);
+
+            // RENDERER
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            // CONTROLS
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            // LIGHTING
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0x00ffcc, 2, 50);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+
+            // SIMULATION GRID (Visualizing your Robotics/Sim background)
+            const grid = new THREE.GridHelper(100, 100, 0x222222, 0x111111);
+            scene.add(grid);
+
+            // INTERACTIVE NODES (Representing key skills/publications)
+            const nodeData = [
+                { name: "Research", color: 0x00ffcc, pos: [-3, 2, 0], link: "https://scholar.google.com/citations?user=lGBnaQ4AAAAJ" },
+                { name: "Dev/GitHub", color: 0xff00ff, pos: [2, 3], link: "https://github.com/yourusername" },
+                { name: "PhD Project", color: 0xffff00, pos: [0, 4, -2], link: "#" }
+            ];
+
+            nodeData.forEach(data => {
+                const geo = new THREE.SphereGeometry(0.5, 32, 32);
+                const mat = new THREE.MeshPhongMaterial({ 
+                    color: data.color, 
+                    emissive: data.color, 
+                    emissiveIntensity: 0.5,
+                    shininess: 100 
+                });
+                const sphere = new THREE.Mesh(geo, mat);
+                sphere.position.set(...data.pos);
+                sphere.userData = { link: data.link, name: data.name };
+                scene.add(sphere);
+                nodes.push(sphere);
+            });
+
+            // RAYCASTER FOR INTERACTIVITY
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            window.addEventListener('click', onDocumentMouseDown);
+            window.addEventListener('resize', onWindowResize);
         }
-      }
 
-      function refreshText() {
-        group.remove(textMesh1);
-        if (mirror) group.remove(textMesh2);
+        function onDocumentMouseDown(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        if (!text) return;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodes);
 
-        createText();
-      }
+            if (intersects.length > 0) {
+                const object = intersects.object;
+                console.log("Navigating to: " + object.userData.name);
+                if(object.userData.link !== "#") window.open(object.userData.link, '_blank');
+            }
+        }
 
-      function onPointerDown(event) {
-        if (event.isPrimary === false) return;
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
 
-        pointerXOnPointerDown = event.clientX - windowHalfX;
-        targetRotationOnPointerDown = targetRotation;
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Subtle floating animation for nodes
+            nodes.forEach((node, i) => {
+                node.position.y += Math.sin(Date.now() * 0.001 + i) * 0.005;
+            });
 
-        document.addEventListener("pointermove", onPointerMove);
-        document.addEventListener("pointerup", onPointerUp);
-      }
-
-      function onPointerMove(event) {
-        if (event.isPrimary === false) return;
-
-        pointerX = event.clientX - windowHalfX;
-
-        targetRotation =
-          targetRotationOnPointerDown +
-          (pointerX - pointerXOnPointerDown) * 0.02;
-      }
-
-      function onPointerUp() {
-        if (event.isPrimary === false) return;
-
-        document.removeEventListener("pointermove", onPointerMove);
-        document.removeEventListener("pointerup", onPointerUp);
-      }
-
-      //
-
-      function animate() {
-        requestAnimationFrame(animate);
-
-        render();
-      }
-
-      function render() {
-        group.rotation.y += (targetRotation - group.rotation.y) * 0.05;
-
-        camera.lookAt(cameraTarget);
-
-        renderer.clear();
-        renderer.render(scene, camera);
-      }
+            controls.update();
+            renderer.render(scene, camera);
+        }
     </script>
-  </body>
+</body>
 </html>
